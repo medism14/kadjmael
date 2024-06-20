@@ -17,7 +17,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import * as jwt from 'jsonwebtoken';
-
+import { ProviderDto } from './dto/provider-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -41,6 +41,44 @@ export class UsersController {
   @Post('/login')
   async login(@Body() loginUserDto: LoginUserDto, @Res() res: Response) {
     try {
+      const { accessToken, refreshToken, user } =
+        await this.usersService.login(loginUserDto);
+      return res.status(200).json({ accessToken, refreshToken, user });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('/provider')
+  async google(@Body() providerDto: ProviderDto, @Res() res: Response) {
+    try {
+      const userExist = await this.usersService.findByEmail(providerDto.email);
+
+      //Enregistrement de l'utilisateur s'il n'existe pas
+      if (!userExist) {
+        const createUserDto = {
+          name: providerDto.name,
+          email: providerDto.email,
+        };
+
+        const user = await this.usersService.create(createUserDto);
+
+        const createAuthProvider = {
+          providerName: providerDto.provider_name,
+          providerId: providerDto.provider_id,
+          user: user,
+        };
+
+        await this.usersService.createAuthProvider(createAuthProvider);
+      }
+
+      //Connexion de l'utilisateur
+      const loginUserDto = {
+        email: userExist.email,
+        souvenir: true,
+        type: 'providers',
+      };
+
       const { accessToken, refreshToken, user } =
         await this.usersService.login(loginUserDto);
       return res.status(200).json({ accessToken, refreshToken, user });
@@ -126,7 +164,7 @@ export class UsersController {
   @Post('/verifyToken')
   async verifyToken(@Body() { token }: { token: string }) {
     try {
-      return jwt.verify(token, "Xq23h!aY*6Fc8nZ1v9P4e5T7u0i3O2k1j");
+      return jwt.verify(token, 'Xq23h!aY*6Fc8nZ1v9P4e5T7u0i3O2k1j');
     } catch (error) {
       console.error(error);
       throw error;

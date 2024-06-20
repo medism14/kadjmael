@@ -3,8 +3,8 @@ import { GoogleAuthService } from './google-auth.service';
 import { GoogleAuthController } from './google-auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthProvider } from 'src/auth_providers/entities/auth_provider.entity';
-import { User } from '../users/entities/user.entity'; // Importez l'entité User
-import { UsersService } from '../users/users.service'; // Importez le service UsersService
+import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service'; 
 import { PassportModule } from '@nestjs/passport';
 
 @Module({

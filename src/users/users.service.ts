@@ -15,11 +15,15 @@ import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
+import { AuthProvider } from 'src/auth_providers/entities/auth_provider.entity';
+import { ProviderDto } from './dto/provider-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(AuthProvider)
+    private authProviderRepository: Repository<AuthProvider>,
     private jwtService: JwtService,
     private mailerService: MailerService,
   ) {}
@@ -48,6 +52,16 @@ export class UsersService {
     }
 
     return await this.userRepository.save(user);
+  }
+
+  async createAuthProvider(createAuthProvider: {
+    providerName: string;
+    providerId: string;
+    user: User;
+  }) {
+    const authProvider = this.authProviderRepository.create(createAuthProvider);
+
+    return await this.authProviderRepository.save(authProvider);
   }
 
   async sendMail(email: string, type: string) {
@@ -112,7 +126,7 @@ export class UsersService {
   async login(loginUserDto: LoginUserDto) {
     const { email, password, souvenir, type } = loginUserDto;
 
-    if (type != 'providers') {
+    if (type == 'providers') {
       const user = await this.findByEmail(email);
 
       if (!user) {

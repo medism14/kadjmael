@@ -22,7 +22,7 @@ export class AuthProvider {
   providerName: string;
 
   @Column({ name: 'provider_id' })
-  providerId: number;
+  providerId: string;
 
   @OneToOne(() => User, (user) => user.authProvider)
   @JoinColumn({ name: 'user_id' })

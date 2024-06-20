@@ -11,21 +11,30 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.kadjmael"
+      "package": "com.anonymous.kadjmael",
+      "runtimeVersion": "1.0.0"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "@react-native-google-signin/google-signin"
     ],
     "extra": {
       "eas": {
         "projectId": "c016ae9d-e0a1-4e52-84c1-18a702e8eb84"
       }
+    },
+    "scheme": "myapp",
+    "updates": {
+      "url": "https://u.expo.dev/c016ae9d-e0a1-4e52-84c1-18a702e8eb84"
     }
   }
 }

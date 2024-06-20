@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Pressable, Dimensions } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import globalStyles from "../../globalStyles";
 import { Entypo } from "@expo/vector-icons";
 import {
@@ -8,131 +8,24 @@ import {
 } from "react-native-responsive-screen";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import { AntDesign } from "@expo/vector-icons";
+import * as Google from "expo-auth-session/providers/google";
+import * as AuthSession from "expo-auth-session";
 
 const AuthProvidersC = ({ type }) => {
   const windowWidth = Dimensions.get("window").width;
 
-  if (type == "connexion") {
-    return (
-      <View
-        style={[
-          { marginTop: hp("4%") },
-          windowWidth > 500 ? { gap: 40 } : { gap: 20 },
-        ]}>
-        {/* Connexion avec facebook */}
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Pressable
-            style={[
-              globalStyles.outConnexionPressable,
-              windowWidth > 500
-                ? { borderRadius: 30, gap: 20 }
-                : { borderRadius: 15, gap: 10 },
-            ]}>
-            <Entypo
-              name='facebook'
-              size={windowWidth > 500 ? 50 : 25}
-              color='black'
-            />
+  const [useInfo, setUserInfo] = useState(null);
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
+    {
+      androidClientId:
+        "550838337034-a6j15j590kfuqhl9ogpmbc66dk6r1ia1.apps.googleusercontent.com",
+    },
+    { native: "myapp://auth" }
+  );
 
-            <Text
-              style={{
-                fontSize: RFPercentage(1.7),
-                fontFamily: "Inter-Bold",
-                color: "white",
-              }}>
-              Connectez-vous avec Facebook
-            </Text>
-          </Pressable>
-        </View>
-
-        {/* Connexion avec google */}
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Pressable
-            style={[
-              globalStyles.outConnexionPressable,
-              windowWidth > 500
-                ? { borderRadius: 30, gap: 20 }
-                : { borderRadius: 15, gap: 10 },
-            ]}>
-            <AntDesign
-              name='google'
-              size={windowWidth > 500 ? 50 : 25}
-              color='black'
-            />
-
-            <Text
-              style={{
-                fontSize: RFPercentage(1.7),
-                fontFamily: "Inter-Bold",
-                color: "white",
-              }}>
-              Connectez-vous avec Google
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  } else {
-    return (
-      <View
-        style={[
-          { marginTop: hp("4%") },
-          windowWidth > 500 ? { gap: 40 } : { gap: 20 },
-        ]}>
-        {/* Connexion avec facebook */}
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Pressable
-            style={[
-              globalStyles.outConnexionPressable,
-              windowWidth > 500
-                ? { borderRadius: 30, gap: 20 }
-                : { borderRadius: 15, gap: 10 },
-            ]}>
-            <Entypo
-              name='facebook'
-              size={windowWidth > 500 ? 50 : 25}
-              color='black'
-            />
-
-            <Text
-              style={{
-                fontSize: RFPercentage(1.7),
-                fontFamily: "Inter-Bold",
-                color: "white",
-              }}>
-              Inscrivez-vous avec Facebook
-            </Text>
-          </Pressable>
-        </View>
-
-        {/* Connexion avec google */}
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Pressable
-            style={[
-              globalStyles.outConnexionPressable,
-              windowWidth > 500
-                ? { borderRadius: 30, gap: 20 }
-                : { borderRadius: 15, gap: 10 },
-            ]}>
-            <AntDesign
-              name='google'
-              size={windowWidth > 500 ? 50 : 25}
-              color='black'
-            />
-
-            <Text
-              style={{
-                fontSize: RFPercentage(1.7),
-                fontFamily: "Inter-Bold",
-                color: "white",
-              }}>
-              Inscrivez-vous avec Google
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  }
+  const handleClick = () => {
+    console.log("clicked");
+  };
 
   return (
     <View
@@ -148,20 +41,22 @@ const AuthProvidersC = ({ type }) => {
             windowWidth > 500
               ? { borderRadius: 30, gap: 20 }
               : { borderRadius: 15, gap: 10 },
-          ]}>
+          ]}
+          onPress={handleClick}>
           <Entypo
             name='facebook'
             size={windowWidth > 500 ? 50 : 25}
             color='black'
           />
-
           <Text
             style={{
               fontSize: RFPercentage(1.7),
               fontFamily: "Inter-Bold",
               color: "white",
             }}>
-            Connectez-vous avec Facebook
+            {type === "connexion"
+              ? "Connectez-vous avec Facebook"
+              : "Inscrivez-vous avec Facebook"}
           </Text>
         </Pressable>
       </View>
@@ -174,20 +69,24 @@ const AuthProvidersC = ({ type }) => {
             windowWidth > 500
               ? { borderRadius: 30, gap: 20 }
               : { borderRadius: 15, gap: 10 },
-          ]}>
+          ]}
+          onPress={() => {
+            promptAsync();
+          }}>
           <AntDesign
             name='google'
             size={windowWidth > 500 ? 50 : 25}
             color='black'
           />
-
           <Text
             style={{
               fontSize: RFPercentage(1.7),
               fontFamily: "Inter-Bold",
               color: "white",
             }}>
-            Connectez-vous avec Google
+            {type === "connexion"
+              ? "Connectez-vous avec Google"
+              : "Inscrivez-vous avec Google"}
           </Text>
         </Pressable>
       </View>

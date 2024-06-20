@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 export default function App() {
+
   const [fontsLoaded] = useFonts({
     "Inter-Black": require("./assets/fonts/Inter-Black.ttf"),
     "Inter-ExtraBold": require("./assets/fonts/Inter-ExtraBold.ttf"),
@@ -25,9 +26,6 @@ export default function App() {
     "Inter-Bold": require("./assets/fonts/Inter-Bold.ttf"),
   });
 
-  const [accessToken, setAccessToken] = useState(null);
-  const [refreshToken, setRefreshToken] = useState(null);
-
   axios.interceptors.request.use(authInterceptor);
 
   const onLayoutRootView = useCallback(async () => {
@@ -39,19 +37,6 @@ export default function App() {
   useEffect(() => {
     onLayoutRootView();
   }, [fontsLoaded, onLayoutRootView]);
-
-  useEffect(() => {
-
-    const getTokens = async () => {
-      const accessToken = await AsyncStorage.getItem('accessToken');
-      const refreshToken = await AsyncStorage.getItem('refreshToken');
-      setAccessToken(accessToken);
-      setRefreshToken(refreshToken);
-    }
-
-    getTokens();
-
-  }, [])
 
   if (!fontsLoaded) {
     return (
